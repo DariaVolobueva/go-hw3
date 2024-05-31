@@ -4,6 +4,12 @@ import (
 	"fmt"
 )
 
+const (
+	LocationCave  = "печера"
+	LocationForest = "ліс"
+	LocationCamp  = "табір"
+)
+
 type GameState struct {
 	Location  string
 	Inventory []string
@@ -11,16 +17,16 @@ type GameState struct {
 
 func showOptions(state GameState) {
 	switch state.Location {
-	case "печера":
+	case LocationCave:
 		fmt.Println("Ви можете:")
 		fmt.Println("1. Ввійти до печери")
 		fmt.Println("2. Іти до лісу")
-	case "ліс":
+	case LocationForest:
 		fmt.Println("Ви можете:")
 		fmt.Println("1. Оглянути мертву тварину")
 		fmt.Println("2. Іти далі до табору")
 		fmt.Println("3. Повернутися до печери")
-	case "табір":
+	case LocationCamp:
 		fmt.Println("Ви можете:")
 		fmt.Println("1. Відпочити в наметі")
 		fmt.Println("2. Іти далі")
@@ -30,26 +36,26 @@ func showOptions(state GameState) {
 	}
 }
 
-func handleAction(state *GameState, action int) {
+func (state *GameState) handleAction(action int) {
 	switch state.Location {
-	case "печера":
+	case LocationCave:
 		if action == 1 {
 			fmt.Println("\nУ печері темно, і ви нічого не бачите.")
 		} else if action == 2 {
-			state.Location = "ліс"
+			state.Location = LocationForest
 			fmt.Println("\nВи йдете до лісу.")
 		}
-	case "ліс":
+	case LocationForest:
 		if action == 1 {
 			fmt.Println("\nВи бачите мертву тварину, але вирішуєте нічого не робити.")
 		} else if action == 2 {
-			state.Location = "табір"
+			state.Location = LocationCamp
 			fmt.Println("\nВи йдете далі і приходите до табору.")
 		} else if action == 3 {
-			state.Location = "печера"
+			state.Location = LocationCave
 			fmt.Println("\nВи повертаєтесь до печери.")
 		}
-	case "табір":
+	case LocationCamp:
 		if action == 1 {
 			if !contains(state.Inventory, "сейф") {
 				fmt.Println("\nВи відпочиваєте в наметі і знаходите сейф.")
@@ -59,9 +65,9 @@ func handleAction(state *GameState, action int) {
 			}
 		} else if action == 2 {
 			fmt.Println("\nВи йдете далі, але відчуваєте втому.")
-			state.Location = "ліс"
+			state.Location = LocationForest
 		} else if action == 3 {
-			state.Location = "ліс"
+			state.Location = LocationForest
 			fmt.Println("\nВи повертаєтесь до лісу.")
 		}
 	default:
@@ -80,7 +86,7 @@ func contains(slice []string, item string) bool {
 
 func main() {
 	state := GameState{
-		Location:  "печера",
+		Location:  LocationCave,
 		Inventory: []string{"сірники", "ліхтарик", "ніж"},
 	}
 
@@ -98,9 +104,9 @@ func main() {
 			continue
 		}
 
-		handleAction(&state, action)
+		state.handleAction(action)
 
-		if state.Location == "печера" && action == 1 {
+		if state.Location == LocationCave  && action == 1 {
 			fmt.Println("\nА все могло бути зовсім інакше.")
 			break
 		}
